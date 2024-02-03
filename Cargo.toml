@@ -2,8 +2,13 @@
 name = "btcmserver"
 version = "0.1.0"
 edition = "2021"
-
+[[bin]]
+name = "btcmserver"
+path = "src/bin/main.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[target.x86_64-unknown-linux-musl]
+linker = "x86_64-linux-musl-gcc"
 
 [dependencies]
 #redis = "0.24.0"
@@ -14,3 +19,7 @@ btcmnetwork = {version = "0.1.0", path = "../btcmnetwork" }
 # bytes = "1.5.0"
 #async-nats = "0.33.0"
 #nats = "0.24.1"
+[profile.release]
+opt-level = "z"  # "z" 表示进行最大程度的优化
+debug = false     # 禁用调试信息
+rpath = false     # 在Linux和Unix系统上禁用RPATH，可以减小可执行文件的大小
