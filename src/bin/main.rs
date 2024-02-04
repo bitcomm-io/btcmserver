@@ -18,9 +18,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let webserver_handle = tokio::spawn(async move {
         webserver::star_webserver(cpm1).await;
     });
-    // 启动两个服务
-    #[allow(unused_variables)]
-    let var_name = tokio::join!(imserver_handle,webserver_handle);
+    // 等待两个服务执行完毕
+    // #[allow(unused_variables)]
+    tokio::try_join!(imserver_handle,webserver_handle)?;
 
     Ok(())
 }
