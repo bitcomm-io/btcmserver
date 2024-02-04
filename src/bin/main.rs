@@ -1,13 +1,26 @@
 // 版权归亚马逊公司及其关联公司所有。保留所有权利。
 // SPDX-License-Identifier: Apache-2.0
 
-use btcmnetwork::imserver;
-use std::error::Error;
+use btcmnetwork::{connservice::ClientPoolManager, imserver};
+use btcmweb::webserver;
+use std::{error::Error, sync::Arc};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    
-    let imserver_result = imserver::start_instant_message_server().await;
-    
-    imserver_result
+    let cpm0 = Arc::new(tokio::sync::Mutex::new(ClientPoolManager::new()));
+    // 使用 tokio::spawn 启动异步任务
+    let cpm1 = cpm0.clone();
+    // IM Server
+    let imserver_handle = tokio::spawn(async move {
+        imserver::start_instant_message_server(cpm0).await.expect("imserver error!");
+    });
+    // Web Server
+    let webserver_handle = tokio::spawn(async move {
+        webserver::star_webserver(cpm1).await;
+    });
+    // 启动两个服务
+    #[allow(unused_variables)]
+    let var_name = tokio::join!(imserver_handle,webserver_handle);
+
+    Ok(())
 }
