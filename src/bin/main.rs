@@ -1,13 +1,19 @@
 // 版权归亚马逊公司及其关联公司所有。保留所有权利。
 // SPDX-License-Identifier: Apache-2.0
 
-use btcmnetwork::{connservice::ClientPoolManager,eventqueue::{MessageEvent, MessageEventQueue},imserver, mqserver};
+use btcmnetwork::{connservice::ClientPoolManager,eventqueue::{MessageEvent, MessageEventQueue},imserver, mqserver,wdserver};
 use btcmweb::webserver;
 use tokio::sync::{mpsc::{Receiver, Sender}, Mutex};
 use std::{error::Error, sync::Arc};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+
+
+    // 加载配置
+    let config = Config::load_from_env();
+
+
     let meq = MessageEventQueue::new();
     let meqsend: Arc<Mutex<Sender<MessageEvent>>>   = Arc::new(Mutex::new(meq.sender));
     let meqrece: Arc<Mutex<Receiver<MessageEvent>>> = Arc::new(Mutex::new(meq.receiver));
@@ -28,8 +34,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let webserver_handle = tokio::spawn(async move {
         webserver::star_webserver(cpm3).await;
     });
-    // 等待三个服务执行完毕
-    tokio::try_join!(mqserver_handle,imserver_handle,webserver_handle)?;
+    // WD Server
+    let cpm4 = cpm0.clone();
+    let wdserver_handle = tokio::spawn(async move {
+        wdserver::start_watch_dog_server(cpm4).await.expect("wdserver error!");
+    });
+    // 等待四个服务执行完毕
+    tokio::try_join!(mqserver_handle,imserver_handle,webserver_handle,wdserver_handle)?;
 
     Ok(())
 } 
