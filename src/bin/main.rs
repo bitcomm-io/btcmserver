@@ -3,15 +3,62 @@
 
 use btcmnetwork::{connservice::ClientPoolManager,eventqueue::{MessageEvent, MessageEventQueue},imserver, mqserver,wdserver};
 use btcmweb::webserver;
+
 use tokio::sync::{mpsc::{Receiver, Sender}, Mutex};
-use std::{error::Error, sync::Arc};
+
+
+use std::error::Error;
+// use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
+
+use btcmtools::LOGGER;
+use slog::info;
+
+
+// use std::sync::mpsc::channel;
+// use ctrlc;
+
+// 全局变量用于指示服务是否应该继续运行
+// static SHOULD_RUN: AtomicBool = AtomicBool::new(true);
+
+// 定义服务的配置结构体
+#[allow(dead_code)]
+struct Config {
+    imserver    : String,
+    import      : u16,
+    webserver   : String,
+    webport     : u16,
+    log_level   : slog::Level,
+}
+
+impl Config {
+    #[allow(dead_code)]
+    // 从环境变量中加载配置
+    fn load_from_env() -> Self {
+        let imserver = std::env::var("IMSERVER").unwrap_or_else(|_| "0.0.0.0".to_string());
+        let import = std::env::var("IMPORT").unwrap_or_else(|_| "9563".to_string()).parse().unwrap();
+        let webserver = std::env::var("WEBSERVER").unwrap_or_else(|_| "0.0.0.0".to_string());
+        let webport = std::env::var("WEBPORT").unwrap_or_else(|_| "1220".to_string()).parse().unwrap();
+
+        let log_level = std::env::var("LOG_LEVEL").unwrap_or_else(|_| "info".to_string()).parse().unwrap();
+        Config { imserver, import,webserver,webport, log_level }
+    }
+}
+
+
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
 
-
     // 加载配置
-    let config = Config::load_from_env();
+    // let config = Config::load_from_env();
+
+
+    info!(LOGGER, "start server");
+
+    // let (tx, _rx) = channel();
+    
+    // ctrlc::set_handler(move || tx.send(()).expect("Could not send signal on channel.")).expect("Error setting Ctrl-C handler");
 
 
     let meq = MessageEventQueue::new();
@@ -44,3 +91,87 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 } 
+
+/*
+ * 
+ * 
+ * 在 Rust 中，编写一个通用的后台服务的程序框架需要考虑到很多因素，比如异步性能、错误处理、日志记录、配置管理等。
+ * 下面是一个简单的通用后台服务程序框架示例，它使用了 Tokio 作为异步运行时，并使用 slog-rs 进行日志记录：
+ use std::error::Error;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use tokio::net::TcpListener;
+use tokio::sync::oneshot;
+use slog::{info, o, Drain};
+use slog_async::Async;
+use slog_term::{FullFormat, TermDecorator};
+
+// 全局变量用于指示服务是否应该继续运行
+static SHOULD_RUN: AtomicBool = AtomicBool::new(true);
+
+// 定义服务的配置结构体
+struct Config {
+    address: String,
+    port: u16,
+    log_level: slog::Level,
+}
+
+impl Config {
+    // 从环境变量中加载配置
+    fn load_from_env() -> Self {
+        let address = std::env::var("ADDRESS").unwrap_or_else(|_| "127.0.0.1".to_string());
+        let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string()).parse().unwrap();
+        let log_level = std::env::var("LOG_LEVEL").unwrap_or_else(|_| "info".to_string()).parse().unwrap();
+        Config { address, port, log_level }
+    }
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    // 加载配置
+    let config = Config::load_from_env();
+
+    // 初始化日志记录器
+    let log = init_logger(config.log_level)?;
+
+    // 捕获 SIGINT 信号（Ctrl + C）
+    let (stop_signal_sender, stop_signal_receiver) = oneshot::channel();
+    ctrlc::set_handler(move || {
+        info!(log, "Received SIGINT, stopping server");
+        stop_signal_sender.send(()).unwrap();
+    })?;
+
+    // 启动服务
+    let listener = TcpListener::bind(format!("{}:{}", config.address, config.port)).await?;
+    info!(log, "Server listening on {}:{}", config.address, config.port);
+
+    // 处理连接
+    while let Ok((socket, _)) = listener.accept().await {
+        tokio::spawn(handle_connection(socket, log.clone(), stop_signal_receiver.clone()));
+    }
+
+    Ok(())
+}
+
+async fn handle_connection(socket: tokio::net::TcpStream, log: slog::Logger, stop_signal_receiver: oneshot::Receiver<()>) {
+    // 在这里处理连接
+    // 可以使用 log 记录日志
+    while SHOULD_RUN.load(Ordering::Relaxed) {
+        // 处理连接的代码
+    }
+
+    // 停止信号接收器已经收到信号，停止服务
+    info!(log, "Stopping server");
+    SHOULD_RUN.store(false, Ordering::Relaxed);
+}
+
+// 初始化日志记录器
+fn init_logger(log_level: slog::Level) -> Result<slog::Logger, Box<dyn Error>> {
+    let decorator = TermDecorator::new().build();
+    let drain = FullFormat::new(decorator).build().fuse();
+    let drain = Async::new(drain).build().fuse();
+    let drain = Mutex::new(drain).fuse();
+    Ok(slog::Logger::root(drain, o!()).level(log_level))
+}
+
+ */
