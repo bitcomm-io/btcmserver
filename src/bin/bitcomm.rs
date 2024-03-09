@@ -17,15 +17,11 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 /// 主函数，程序入口
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let version: &'static str = env!("CARGO_PKG_VERSION");
-    info!("bitcomm version = {}", version);
 
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::new(
-            std::env::var("RUST_LOG").unwrap_or_else(|_| "info,jwt_authorizer=debug,tower_http=debug".into()),
-        ))
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+    init_tracing();
+
+    // let version: &'static str = env!("CARGO_PKG_VERSION");
+    info!("bitcomm version = {}", env!("CARGO_PKG_VERSION"));
 
     return start_server().await;
     // 解析命令行参数
@@ -33,7 +29,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     //
     // switch_command(opt).await
 }
-
+fn init_tracing() {
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::EnvFilter::new(
+            std::env::var("RUST_LOG").unwrap_or_else(|_| "info,jwt_authorizer=debug,tower_http=debug".into()),
+        ))
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+}
 /// 初始化 Citric 系统，设置 Ctrl-C 信号处理
 fn _init_citric_system() {
     let (tx, rx) = channel();
