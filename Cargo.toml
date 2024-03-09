@@ -22,7 +22,8 @@ slog = "2.7.0"
 structopt = "0.3.26"
 # lazy_static = "1.4.0"
 ctrlc = {version = "3.4.2",features = ["termination"]}
-
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [profile.release]
 opt-level = "z"  # "z" 表示进行最大程度的优化

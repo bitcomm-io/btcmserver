@@ -7,16 +7,26 @@ use btcmweb::webserver;
 use std::error::Error;
 use std::sync::mpsc::channel;
 use ctrlc;
-use btcmtools::{ LOGGER, BitcommOpt };
-use slog::info;
+use btcmtools::BitcommOpt;
+// use slog::info;
 use tokio::signal;
+use tracing::info;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 
 /// 主函数，程序入口
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let version: &'static str = env!("CARGO_PKG_VERSION");
-    info!(LOGGER, "bitcomm version = {}", version);
+    info!("bitcomm version = {}", version);
+
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::EnvFilter::new(
+            std::env::var("RUST_LOG").unwrap_or_else(|_| "info,jwt_authorizer=debug,tower_http=debug".into()),
+        ))
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
     return start_server().await;
     // 解析命令行参数
     // let opt = BitcommOpt::from_args();
@@ -59,7 +69,7 @@ fn stop_server() {
     if pid != -1 {
         btcmtools::pid::kill_pid(pid);
     } else {
-        info!(LOGGER, "Service not started");
+        info!( "Service not started");
     }
     btcmtools::pid::dele_pid();
 }
@@ -69,7 +79,7 @@ async fn start_server() -> Result<(), Box<dyn Error>> {
     // 写入 PID
     btcmtools::pid::save_pid();
     // 输出日志
-    info!(LOGGER, "start server...");
+    info!("start server...");
 
     // 获取 MQ Server 异步任务句柄
     let mqserver_handle = get_mqserver_handle();
@@ -110,7 +120,7 @@ fn get_wdserver_handle() -> tokio::task::JoinHandle<()> {
                     // println!("Received SIGTERM, shutting down...");
                 }
                 _ = async {
-                    info!(LOGGER,"Watch Dog Server starting...");
+                    info!("Watch Dog Server starting...");
                     // 启动 Watch Dog 异步任务
                     wdserver::start_watch_dog_server().await.expect("wdserver error!");
                     // 
@@ -119,7 +129,7 @@ fn get_wdserver_handle() -> tokio::task::JoinHandle<()> {
                 }
             }
 
-            info!(LOGGER, "Received SIGINT/SIGTERM, Watch Dog server shutting down...");
+            info!("Received SIGINT/SIGTERM, Watch Dog server shutting down...");
         })
     };
     wdserver_handle
@@ -146,7 +156,7 @@ fn get_webserver_handle() -> tokio::task::JoinHandle<()> {
                     // println!("Received SIGTERM, shutting down...");
                 }
                 _ = async {
-                    info!(LOGGER,"Web Admin Server starting...");
+                    info!("Web Admin Server starting...");
                     // 启动 Web Admin 异步任务
                     webserver::star_webserver().await;
                     // 
@@ -155,7 +165,7 @@ fn get_webserver_handle() -> tokio::task::JoinHandle<()> {
                 }
             }
 
-            info!(LOGGER, "Received SIGINT/SIGTERM, Web Admin Server shutting down...");
+            info!( "Received SIGINT/SIGTERM, Web Admin Server shutting down...");
         })
     };
     webserver_handle
@@ -182,7 +192,7 @@ fn get_imserver_handle() -> tokio::task::JoinHandle<()> {
                     // println!("Received SIGTERM, shutting down...");
                 }
                 _ = async {
-                    info!(LOGGER,"Instant Message Server starting...");
+                    info!("Instant Message Server starting...");
                     // 启动 Instant Message 异步任务
                     imserver::start_instant_message_server().await.expect("imserver error!");
                     // 
@@ -191,7 +201,7 @@ fn get_imserver_handle() -> tokio::task::JoinHandle<()> {
                 }
             }
 
-            info!(LOGGER, "Received SIGINT/SIGTERM, Instant Message Server shutting down...");
+            info!("Received SIGINT/SIGTERM, Instant Message Server shutting down...");
         })
     };
     imserver_handle
@@ -219,15 +229,15 @@ fn get_mqserver_handle() -> tokio::task::JoinHandle<()> {
                 }
                 _ = async {
                     // 启动 Message Queue 异步任务
-                    info!(LOGGER,"Message Queue Server starting...");
+                    info!("Message Queue Server starting...");
                     mqserver::start_message_event_queue_server().await.expect("mqserver error!");
                     // 
                 } => {
-                    println!("Received connection, shutting down...");
+                    info!("Received connection, shutting down...");
                 }
             }
 
-            info!(LOGGER, "Received SIGINT/SIGTERM, Message Queue Server shutting down...");
+            info!( "Received SIGINT/SIGTERM, Message Queue Server shutting down...");
         })
     };
     mqserver_handle
