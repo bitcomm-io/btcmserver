@@ -29,6 +29,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     //
     // switch_command(opt).await
 }
+
 fn print_log() {
     println!("                              ( * )");
     println!("                            /   |   \\ "); 
