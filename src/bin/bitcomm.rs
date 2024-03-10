@@ -19,15 +19,42 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 async fn main() -> Result<(), Box<dyn Error>> {
 
     init_tracing();
-
+    print_log();
     // let version: &'static str = env!("CARGO_PKG_VERSION");
-    info!("bitcomm version = {}", env!("CARGO_PKG_VERSION"));
+    // info!("bitcomm version = {}", env!("CARGO_PKG_VERSION"));
 
     return start_server().await;
     // 解析命令行参数
     // let opt = BitcommOpt::from_args();
     //
     // switch_command(opt).await
+}
+fn print_log() {
+    println!("                              ( * )");
+    println!("                            /   |   \\ "); 
+    println!("                      ( * ) -   |   - ( * )");
+    println!("                    /   |   \\   |   /   |   \\");
+    println!("              ( * ) -   |   - ( * ) -   |   - ( * )");
+    println!("            /   |   \\   |   /   |   \\   |   /   |   \\ ");
+    println!("      ( * ) ----|---- ( * ) -   |   - ( * ) -   |   - ( * )");
+    println!("        |   \\   |   /   |   \\   |   /   |   \\   |   /   |");
+    println!("        |     ( * ) -   |   - ( * ) -   |   - ( * )-    |");
+    println!("        |   /   |   \\   |   /   |   \\   |   /   |   \\   | ");
+    println!("      ( * ) -   |   - ( * ) -   |   - ( * ) -   |   - ( * )");
+    println!("            \\   |   /   |   \\   |   /   |   \\   |   /");
+    println!("              ( * ) -   |   - ( * ) -   |   - ( * )");
+    println!("            /   |   \\   |   /   |   \\   |   /   |   \\   ");
+    println!("      ( * ) -   |   - ( * ) -   |   - ( * ) -   |   - ( * )");
+    println!("        |   \\   |   /   |   \\   |   /   |   \\   |   /   |");
+    println!("        |     ( * ) -   |   - ( * ) -   |   - ( * ) -   |");
+    println!("        |   /   |   \\   |   /   |   \\   |   /   |   \\   | ");
+    println!("      ( * ) -   |   - ( * ) -   |   - ( * ) -   |   - ( * )");
+    println!("            \\   |   /   |   \\   |   /   |   \\   |   / ");
+    println!("              ( * )-    |   - ( * ) -   |   - ( * )  ");
+    println!("                    \\   |   /   |   \\   |   /");
+    println!("                      ( * ) -   |   - ( * )");
+    println!("                            \\   |   /");
+    println!("                              ( * )");
 }
 fn init_tracing() {
     tracing_subscriber::registry()
