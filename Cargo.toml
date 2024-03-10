@@ -24,6 +24,8 @@ structopt = "0.3.26"
 ctrlc = {version = "3.4.2",features = ["termination"]}
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+colored = "2.0"
+
 
 [profile.release]
 opt-level = "z"  # "z" 表示进行最大程度的优化

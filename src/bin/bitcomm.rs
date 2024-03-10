@@ -4,6 +4,7 @@
 // 导入相关模块和库
 use btcmnetwork::{ imserver, mqserver, wdserver };
 use btcmweb::webserver;
+use colored::Colorize;
 use std::error::Error;
 use std::sync::mpsc::channel;
 use ctrlc;
@@ -31,31 +32,35 @@ async fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn print_log() {
-    println!("                              ( * )");
-    println!("                            /   |   \\ "); 
-    println!("                      ( * ) -   |   - ( * )");
-    println!("                    /   |   \\   |   /   |   \\");
-    println!("              ( * ) -   |   - ( * ) -   |   - ( * )");
-    println!("            /   |   \\   |   /   |   \\   |   /   |   \\ ");
-    println!("      ( * ) ----|---- ( * ) -   |   - ( * ) -   |   - ( * )");
-    println!("        |   \\   |   /   |   \\   |   /   |   \\   |   /   |");
-    println!("        |     ( * ) -   |   - ( * ) -   |   - ( * )-    |");
-    println!("        |   /   |   \\   |   /   |   \\   |   /   |   \\   | ");
-    println!("      ( * ) -   |   - ( * ) -   |   - ( * ) -   |   - ( * )");
-    println!("            \\   |   /   |   \\   |   /   |   \\   |   /");
-    println!("              ( * ) -   |   - ( * ) -   |   - ( * )");
-    println!("            /   |   \\   |   /   |   \\   |   /   |   \\   ");
-    println!("      ( * ) -   |   - ( * ) -   |   - ( * ) -   |   - ( * )");
-    println!("        |   \\   |   /   |   \\   |   /   |   \\   |   /   |");
-    println!("        |     ( * ) -   |   - ( * ) -   |   - ( * ) -   |");
-    println!("        |   /   |   \\   |   /   |   \\   |   /   |   \\   | ");
-    println!("      ( * ) -   |   - ( * ) -   |   - ( * ) -   |   - ( * )");
-    println!("            \\   |   /   |   \\   |   /   |   \\   |   / ");
-    println!("              ( * )-    |   - ( * ) -   |   - ( * )  ");
-    println!("                    \\   |   /   |   \\   |   /");
-    println!("                      ( * ) -   |   - ( * )");
-    println!("                            \\   |   /");
-    println!("                              ( * )");
+    println!("");
+    println!("{}","                              ( * )".blue());
+    println!("{}","                            /   |   \\ ".blue()); 
+    println!("{}","                      ( * ) ----|---- ( * )".blue());
+    println!("{}","                    /   |   \\   |   /   |   \\".blue());
+    println!("{}","              ( * ) ----|---- ( * ) ----|---- ( * )".blue());
+    println!("{}","            /   |   \\   |   /   |   \\   |   /   |   \\ ".blue());
+    println!("{}","      ( * ) ----|---- ( * ) ----|---- ( * ) ----|---- ( * )".blue());
+    println!("{}","        |   \\   |   /   |   \\   |   /   |   \\   |   /   |".blue());
+    println!("{}","        |     ( * ) ----|---- ( * ) ----|---- ( * )---- |".blue());
+    println!("{}","        |   /   |   \\   |   /   |   \\   |   /   |   \\   | ".blue());
+    println!("{}","      ( * ) ----|---- ( * ) ----|---- ( * ) ----|---- ( * )  ".blue());
+    println!("{}{}","            \\   |   /   |   \\   |   /   |   \\   |   /".blue(),"         Welcome to Bitcomm ".red());
+    println!("{}{}{}","              ( * ) ----|---- ( * ) ----|---- ( * )".blue(),"             bitcomm version ".red(), env!("CARGO_PKG_VERSION").yellow());
+    println!("{}{}","            /   |   \\   |   /   |   \\   |   /   |   \\".blue(),"         Http2/3,Quic,Redis,...".red());
+    println!("{}","      ( * ) ----|---- ( * ) ----|---- ( * ) ----|---- ( * )".blue());
+    println!("{}","        |   \\   |   /   |   \\   |   /   |   \\   |   /   |".blue());
+    println!("{}","        |     ( * ) ----|---- ( * ) ----|---- ( * ) ----|".blue());
+    println!("{}","        |   /   |   \\   |   /   |   \\   |   /   |   \\   | ".blue());
+    println!("{}","      ( * ) ----|---- ( * ) ----|---- ( * ) ----|---- ( * )".blue());
+    println!("{}","            \\   |   /   |   \\   |   /   |   \\   |   / ".blue());
+    println!("{}","              ( * ) ----|---- ( * ) ----|---- ( * )  ".blue());
+    println!("{}","                    \\   |   /   |   \\   |   /".blue());
+    println!("{}","                      ( * ) ----|---- ( * )".blue());
+    println!("{}","                            \\   |   /".blue());
+    println!("{}","                              ( * )".blue());
+    println!("{}","                         bitcomm server".green());
+    println!("{}","                   decentralized communication".green());
+    println!("");
 }
 fn init_tracing() {
     tracing_subscriber::registry()
