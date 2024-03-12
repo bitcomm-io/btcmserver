@@ -20,7 +20,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 async fn main() -> Result<(), Box<dyn Error>> {
 
     init_tracing();
-    print_log();
+    print_logo();
     // let version: &'static str = env!("CARGO_PKG_VERSION");
     // info!("bitcomm version = {}", env!("CARGO_PKG_VERSION"));
 
@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // switch_command(opt).await
 }
 
-fn print_log() {
+fn print_logo() {
     println!("");
     println!("{}","                              ( * )".blue());
     println!("{}","                            /   |   \\ ".blue()); 
