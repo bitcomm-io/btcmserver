@@ -5,7 +5,7 @@
 use btcmnetwork::{ imserver, mqserver, wdserver };
 use btcmweb::webserver;
 use colored::Colorize;
-use std::error::Error;
+use std::{error::Error, process};
 use std::sync::mpsc::channel;
 use ctrlc;
 use btcmtools::BitcommOpt;
@@ -32,6 +32,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn print_logo() {
+    // 在程序中硬编码 Rust 编译器的版本号
+    let rustc_version = "rustc 1.76.0 (07dca489a 2024-02-04)";//env!("RUSTC_VERSION");
     println!("");
     println!("{}","                              ( * )".blue());
     println!("{}","                            /   |   \\ ".blue()); 
@@ -44,10 +46,10 @@ fn print_logo() {
     println!("{}","        |---- ( * ) ----|---- ( * ) ----|---- ( * ) ----|".blue());
     println!("{}","        |   /   |   \\   |   /   |   \\   |   /   |   \\   | ".blue());
     println!("{}","      ( * ) ----|---- ( * ) ----|---- ( * ) ----|---- ( * )  ".blue());
-    println!("{}{}","            \\   |   /   |   \\   |   /   |   \\   |   /".blue(),"         Welcome to Bitcomm ".red());
-    println!("{}{}{}","              ( * ) ----|---- ( * ) ----|---- ( * )".blue(),"             bitcomm version ".red(), env!("CARGO_PKG_VERSION").yellow());
+    println!("{}{}{}","            \\   |   /   |   \\   |   /   |   \\   |   /".blue(),"         Welcome to Bitcomm! PID = ".red(),process::id().to_string().yellow());
+    println!("{}{}{}","              ( * ) ----|---- ( * ) ----|---- ( * )".blue(),"           bitcomm version ".red(), env!("CARGO_PKG_VERSION").yellow());
     println!("{}{}","            /   |   \\   |   /   |   \\   |   /   |   \\".blue(),"         Http2/3,Quic,Redis,...".red());
-    println!("{}","      ( * ) ----|---- ( * ) ----|---- ( * ) ----|---- ( * )".blue());
+    println!("{}{}{}","      ( * ) ----|---- ( * ) ----|---- ( * ) ----|---- ( * )".blue(),"   Rustc version: ".red(),rustc_version.yellow());//      rust version ",rustc_version::version_meta().unwrap().semver_string());
     println!("{}","        |   \\   |   /   |   \\   |   /   |   \\   |   /   |".blue());
     println!("{}","        |---- ( * ) ----|---- ( * ) ----|---- ( * ) ----|".blue());
     println!("{}","        |   /   |   \\   |   /   |   \\   |   /   |   \\   | ".blue());
@@ -114,6 +116,10 @@ fn stop_server() {
 async fn start_server() -> Result<(), Box<dyn Error>> {
     // 写入 PID
     btcmtools::pid::save_pid();
+    
+    // let version = rustc_version::version_meta().unwrap();
+    
+    // info!("Rustc version: {}", rustc_version::version_meta().unwrap().short_version_string);
     // 输出日志
     info!("start server...");
 

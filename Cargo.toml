@@ -11,6 +11,7 @@ path = "src/bin/bitcomm.rs"
 # linker = "x86_64-linux-musl-gcc"
 
 [dependencies]
+rustc_version = "0.4.0"
 # s2n-quic = { version = "1.32.0", features = ["provider-event-tracing"] }
 tokio = { version = "1.35.0", features = ["full"] }
 # btcmbase = {version = "0.1.0", path = "../btcmbase" }
@@ -31,3 +32,7 @@ colored = "2.0"
 opt-level = "z"  # "z" 表示进行最大程度的优化
 debug = false     # 禁用调试信息
 rpath = false     # 在Linux和Unix系统上禁用RPATH，可以减小可执行文件的大小
+
+[build]
+# 指定 build.rs 为构建脚本
+build = "build.rs"

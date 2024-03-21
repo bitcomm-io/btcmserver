@@ -1,0 +1,16 @@
+[bitcomm]
+redis = "redis://localhost:6753"
+nats = "nats://10.20.30.1"
+
+
+[imserver]
+ip = "0.0.0.0"
+port = "1130"
+
+
+[webserver]
+ip = "0.0.0.0"
+port = "1220"
+
+[wdserver]
+time = "300"
